@@ -1,0 +1,57 @@
+
+import os
+
+RTOS = 'freertos/'
+PORT = 'portable/GCC/ARM_CM4F/'
+BUILD_DIR = 'build'
+
+Import("env")
+
+#   FreeRTOS files
+
+rtos_files = [
+    'tasks.c',
+    'list.c',
+    'timers.c',
+    'queue.c',
+    'portable/MemMang/heap_5.c',
+    PORT + 'port.c',
+]
+
+rtos_includes = [
+    'include/',
+    PORT,
+]
+
+files = []
+includes = []
+
+for name in rtos_files:
+    files.append(RTOS + name)
+for name in rtos_includes:
+    includes.append(RTOS + name)
+
+# this is where FreeRTOSConfig.h needs to be
+includes += [ 'lib/', ]
+
+for name in files:
+    print(name)
+for name in includes:
+    print(name)
+
+cflags = [
+    # Chose one of these :
+    '-DUSE_FREERTOS_MALLOC',
+    #'-DUSE_NEWLIB_MALLOC',
+]
+
+env.Append(CPPPATH=includes)
+env.Append(CFLAGS=cflags)
+
+librtos = env.StaticLibrary(
+    target=os.path.join(BUILD_DIR, 'librtos'),
+    source=files
+)
+Default(librtos)
+
+# FIN

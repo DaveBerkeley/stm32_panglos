@@ -30,11 +30,11 @@ def make_link(src, dst, path):
 files = [
     #'time.cpp',
     #'object.cpp',
-    #'list.cpp',
-    #'io.cpp',
-    #'logger.cpp',
+    'list.cpp',
+    'io.cpp',
+    'logger.cpp',
     #'device.cpp',
-    #'thread.cpp',
+    'thread.cpp',
     #'json.cpp',
     #'event_queue.cpp',
     #'verbose.cpp',
@@ -70,8 +70,8 @@ files = [
     'panglos/time.h',
     #'panglos/object.h',
     'panglos/list.h',
-    #'panglos/io.h',
-    #'panglos/logger.h',
+    'panglos/io.h',
+    'panglos/logger.h',
     'panglos/thread.h',
     'panglos/queue.h',
     #'panglos/device.h',
@@ -112,12 +112,14 @@ files = [
     'panglos/stm32/hal.h',
 
     'panglos/arch.h',
+    'panglos/linux/arch.h',
     #'panglos/riscv32/arch.h',
     #'panglos/xtensa/arch.h',
     'panglos/stm32/arch.h',
     #'riscv32/arch.cpp',
     #'xtensa/arch.cpp',
     'stm32/arch.cpp',
+    'stm32/hal.cpp',
 
     'freertos/yield.h',
     'freertos/time.cpp',
@@ -125,7 +127,10 @@ files = [
     'freertos/semaphore.cpp',
     'freertos/thread.cpp',
     'freertos/queue.cpp',
+
     'panglos/freertos/queue.h',
+
+    'linux/thread.cpp',
 ]
 
 for path in files:

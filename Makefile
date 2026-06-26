@@ -10,7 +10,7 @@ MODE = run
 .PHONY: all flash
 
 VERBOSE = -v
-VERBOSE = 
+#VERBOSE = 
 
 all:
 	pio $(MODE) -e ${TARGET} ${VERBOSE}
@@ -22,10 +22,10 @@ clean:
 TOOLPATH=~/.platformio/packages/toolchain-gccarmnoneeabi/bin
 TOOLPREFIX=arm-none-eabi-
 
-dump:
+dump: all
 	${TOOLPATH}/${TOOLPREFIX}objdump .pio/build/${TARGET}/firmware.elf -d -S
 
-nm:
+nm:	all
 	${TOOLPATH}/${TOOLPREFIX}nm .pio/build/${TARGET}/firmware.elf
 
 #	FIN
