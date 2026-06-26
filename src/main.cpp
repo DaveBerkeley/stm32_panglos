@@ -8,7 +8,10 @@ using namespace panglos;
 
 extern "C" {
 
-extern "C" void po_log(Severity s, const char *fmt, ...)
+    //  Move to rtos app layer
+
+//extern "C" void po_log(Severity s, const char *fmt, ...)
+extern "C" void po_log(Severity , const char *, ...)
 {
     Error_Handler();
 #if 0

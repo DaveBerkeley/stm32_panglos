@@ -41,6 +41,15 @@ uint32_t get_time(void)
     return ms;
 }
 
+void po_log(Severity s, const char *fmt, ...)
+{
+    IGNORE(s);
+    va_list ap;
+    va_start(ap, fmt);
+    vprintf(fmt, ap);
+    va_end(ap);
+}
+
 }
 
 //  FIN

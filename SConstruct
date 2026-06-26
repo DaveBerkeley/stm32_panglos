@@ -4,7 +4,7 @@ import os
 # set up the build config for native
 
 files = [
-    'src/main.cpp',
+    #'src/main.cpp',
 
     'test/rtos.cpp',
 
@@ -32,10 +32,26 @@ cpppath = [
 libs = []
 libpath = []
 cflags = [
+    '-Wall',
+    '-Wextra',
+    '-Werror',
+    '-Wformat=2', # strict level
+    '-Werror=format',
+    
     '-DARCH_LINUX=1',
 ]
-cxxflags = []
-lflags = []
+cxxflags = [
+    '-std=c++14',
+    '-Wall',
+    '-Wextra',
+    '-Werror',
+]
+lflags = [
+    '-lgtest_main',
+    '-lgtest',
+    '-lpthread',
+    '-g',
+]
 
 env = Environment(CCFLAGS=cflags, CXXFLAGS=cxxflags, LINKFLAGS=lflags, CPPPATH=cpppath)
 env["CC"] = os.getenv("CC") or env["CC"]
