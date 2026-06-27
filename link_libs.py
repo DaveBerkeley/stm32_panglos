@@ -29,7 +29,7 @@ def make_link(src, dst, path):
 
 files = [
     #'time.cpp',
-    #'object.cpp',
+    'object.cpp',
     'list.cpp',
     'io.cpp',
     'logger.cpp',
@@ -68,7 +68,7 @@ files = [
     'panglos/mutex.h',
     'panglos/semaphore.h',
     'panglos/time.h',
-    #'panglos/object.h',
+    'panglos/object.h',
     'panglos/list.h',
     'panglos/io.h',
     'panglos/logger.h',
@@ -111,6 +111,7 @@ files = [
     #'panglos/esp32/timer.h',
     'panglos/stm32/hal.h',
     'panglos/stm32/uart.h',
+    'panglos/stm32/gpio_arm.h',
 
     'panglos/arch.h',
     'panglos/linux/arch.h',
@@ -121,6 +122,7 @@ files = [
     #'xtensa/arch.cpp',
     'stm32/arch.cpp',
     'stm32/hal.cpp',
+    'stm32/gpio.cpp',
     'stm32/uart.cpp',
 
     'freertos/yield.h',

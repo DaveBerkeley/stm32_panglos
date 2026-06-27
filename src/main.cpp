@@ -15,8 +15,10 @@ extern "C" {
 #include "panglos/time.h"
 #include "panglos/thread.h"
 #include "panglos/logger.h"
+#include "panglos/object.h"
 
 #include "panglos/stm32/uart.h"
+#include "panglos/stm32/gpio_arm.h"
 
 #include "printf/printf.h"
 
@@ -81,30 +83,19 @@ extern "C" void po_log(Severity s, const char *fmt, ...)
 }
 
     /*
-     *  Application main task
-     */
-
-extern "C" void app_main(void *)
-{
-    PO_DEBUG("");
-
-    // infinite loop
-    while (true)
-    {
-        Time::sleep(1);
-        PO_DEBUG("");
-    }
-}
-
-    /*
      *  Platform specific system initialisation
      */
+
+extern "C" void app_main(void *);
 
 extern "C" int main()
 {
     HAL_Init();
     //SystemClock_Config();
     heap_init();
+
+    Objects::objects = Objects::create(true);
+    ASSERT(Objects::objects);
 
     // init logging / io
     STM32_UART::Config config = {
@@ -124,6 +115,7 @@ extern "C" int main()
     };
     log_uart = STM32_UART::create(& config);
     ASSERT(log_uart);
+    Objects::objects->add("uart", log_uart);
 
     // must be a real mutex here. The TASK_LOCK Mutex will block eg network, timers
     panglos::Mutex *mutex = panglos::Mutex::create();
@@ -139,11 +131,11 @@ extern "C" int main()
 
     const int err = SysTick_Config(SystemCoreClock / 1000);
     ASSERT(!err);
-    
-    //verbose_init();
+ 
+    GPIO *led = gpio_create(GPIOA, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, 0); 
+    Objects::objects->add("led", led);
 
-    //Objects::objects = Objects::create(true);
-    //ASSERT(Objects::objects);
+    //verbose_init();
 
     Thread *thread = Thread::create("main", 0);
     thread->start(app_main, 0);

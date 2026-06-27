@@ -4,7 +4,7 @@ import os
 # set up the build config for native
 
 files = [
-    #'src/main.cpp',
+    'src/app_main.cpp',
 
     'test/rtos.cpp',
 
@@ -15,9 +15,12 @@ panglos = [
     'logger.cpp',
     'list.cpp',
     'io.cpp',
+    'object.cpp',
+    'time.cpp',
 
     'linux/mutex.cpp',
     'linux/thread.cpp',
+    'linux/time.cpp',
     'linux/arch.cpp',
 ]
 
