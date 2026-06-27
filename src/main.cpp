@@ -4,6 +4,8 @@
 #include "panglos/mutex.h"
 #include "panglos/time.h"
 
+#include "rtos.h"
+
 using namespace panglos;
 
 extern "C" {
@@ -51,6 +53,8 @@ int app_main()
 
 extern "C" int main()
 {
+    heap_init();
+
     // need to setup heap, init clocks etc.
     // init logging / io
     return app_main();
