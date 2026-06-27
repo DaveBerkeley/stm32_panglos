@@ -33,4 +33,7 @@ dump: all
 nm:	all
 	${TOOLPATH}/${TOOLPREFIX}nm .pio/build/${TARGET}/firmware.elf
 
+ctags:
+	ctags -R .
+
 #	FIN
