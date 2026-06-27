@@ -87,6 +87,24 @@ extern "C" void po_log(Severity s, const char *fmt, ...)
      *  Platform specific system initialisation
      */
 
+//  Nucleo SMT32F446 Board
+
+#define UART_RX_PORT    GPIOA
+#define UART_RX_PIN     GPIO_PIN_3
+#define UART_RX_ALT     GPIO_AF7_USART2
+#define UART_TX_PORT    GPIOA
+#define UART_TX_PIN     GPIO_PIN_2
+#define UART_TX_ALT     GPIO_AF7_USART2
+#define UART_DEV        USART2
+#define UART_BAUD       115200
+
+#define LED_PORT        GPIOA
+#define LED_PIN         GPIO_PIN_5
+
+    /*
+     *
+     */
+
 extern "C" int main()
 {
     HAL_Init();
@@ -99,27 +117,24 @@ extern "C" int main()
     // init logging / io
     STM32_UART::Config config = {
         .rx = {
-            .port = GPIOA,
-            .pin = GPIO_PIN_3,
-            .alt = GPIO_AF7_USART2,
+            .port = UART_RX_PORT,
+            .pin = UART_RX_PIN,
+            .alt = UART_RX_ALT,
         },
         .tx = {
-            .port = GPIOA,
-            .pin = GPIO_PIN_2,
-            .alt = GPIO_AF7_USART2,
+            .port = UART_TX_PORT,
+            .pin = UART_TX_PIN,
+            .alt = UART_TX_ALT,
         },
-
-        .uart = USART2,
-        .baud = 115200,
+        .uart = UART_DEV,
+        .baud = UART_BAUD,
     };
     log_uart = STM32_UART::create(& config);
     ASSERT(log_uart);
     Objects::objects->add("uart", log_uart);
 
-    // must be a real mutex here. The TASK_LOCK Mutex will block eg network, timers
     panglos::Mutex *mutex = panglos::Mutex::create();
     logger = new Logging(S_DEBUG, mutex);
-
     logger->add(log_uart, S_DEBUG, 0);
 
     // show config, heap / memory data etc.
@@ -131,7 +146,7 @@ extern "C" int main()
     const int err = SysTick_Config(SystemCoreClock / 1000);
     ASSERT(!err);
  
-    GPIO *led = gpio_create(GPIOA, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, 0); 
+    GPIO *led = gpio_create(LED_PORT, LED_PIN, GPIO_MODE_OUTPUT_PP, 0); 
     Objects::objects->add("led", led);
 
     //verbose_init();

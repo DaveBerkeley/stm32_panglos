@@ -12,6 +12,7 @@ TEST(Main, App)
     Objects::objects = Objects::create(true);
     EXPECT_TRUE(Objects::objects);
 
+    // this doesn't yet terminate
     app_main(0);
 
     delete Objects::objects;
