@@ -34,6 +34,8 @@ for name in rtos_includes:
 # this is where FreeRTOSConfig.h needs to be
 includes += [ 'lib/', ]
 
+print("Building librtos")
+
 for name in files:
     print(name)
 for name in includes:
