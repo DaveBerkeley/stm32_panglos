@@ -88,7 +88,7 @@ void heap_init()
 
 void FATAL(const char *text)
 {
-    // TODO : write to UART
+    // TODO : write to an out stream that works in C and C++
     while (1)
         ;
 }
@@ -120,6 +120,15 @@ unsigned long getRunTimeCounterValue(void)
     FATAL("todo");
     return 0;
 //    return HAL_GetTick();
+}
+
+    /*
+     *
+     */
+
+void __attribute__((weak)) vApplicationIdleHook()
+{
+    //  TODO : sleep?
 }
 
 //  FIN

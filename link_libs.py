@@ -94,10 +94,10 @@ files = [
 
     #'drivers/motor.cpp',
     #'drivers/pwm.cpp',
-    #'panglos/drivers/gpio.h',
+    'panglos/drivers/gpio.h',
     #'panglos/drivers/spi.h',
     #'panglos/drivers/i2c.h',
-    #'panglos/drivers/uart.h',
+    'panglos/drivers/uart.h',
     #'panglos/drivers/timer.h',
     #'panglos/drivers/motor.h',
     #'panglos/drivers/pwm.h',
@@ -110,6 +110,7 @@ files = [
     #'panglos/esp32/adc.h',
     #'panglos/esp32/timer.h',
     'panglos/stm32/hal.h',
+    'panglos/stm32/uart.h',
 
     'panglos/arch.h',
     'panglos/linux/arch.h',
@@ -120,6 +121,7 @@ files = [
     #'xtensa/arch.cpp',
     'stm32/arch.cpp',
     'stm32/hal.cpp',
+    'stm32/uart.cpp',
 
     'freertos/yield.h',
     'freertos/time.cpp',

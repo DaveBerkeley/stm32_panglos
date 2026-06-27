@@ -41,11 +41,7 @@ for name in files:
 for name in includes:
     print(name)
 
-cflags = [
-    # Chose one of these :
-    '-DUSE_FREERTOS_MALLOC',
-    #'-DUSE_NEWLIB_MALLOC',
-]
+cflags = [ ]
 
 env.Append(CPPPATH=includes)
 env.Append(CFLAGS=cflags)
