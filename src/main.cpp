@@ -23,6 +23,7 @@ extern "C" {
 #include "printf/printf.h"
 
 #include "rtos.h"
+#include "app_main.h"
 
 using namespace panglos;
 
@@ -85,8 +86,6 @@ extern "C" void po_log(Severity s, const char *fmt, ...)
     /*
      *  Platform specific system initialisation
      */
-
-extern "C" void app_main(void *);
 
 extern "C" int main()
 {

@@ -7,6 +7,7 @@ files = [
     'src/app_main.cpp',
 
     'test/rtos.cpp',
+    'test/main.cpp',
 
     'lib/printf/src/printf/printf.c',
 ]
@@ -28,6 +29,7 @@ for name in panglos:
     files += [ '../panglos/src/' + name ]
 
 cpppath = [
+    'src/',
     'lib/panglos/src/',
     'lib/printf/src/',
 ]
@@ -35,6 +37,7 @@ cpppath = [
 libs = []
 libpath = []
 cflags = [
+    '-g',
     '-Wall',
     '-Wextra',
     '-Werror',

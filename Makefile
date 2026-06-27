@@ -30,12 +30,13 @@ clean:
 
 TOOLPATH=~/.platformio/packages/toolchain-gccarmnoneeabi/bin
 TOOLPREFIX=arm-none-eabi-
+ELF=.pio/build/${TARGET}/firmware.elf
 
 dump: all
-	${TOOLPATH}/${TOOLPREFIX}objdump .pio/build/${TARGET}/firmware.elf -d -S
+	${TOOLPATH}/${TOOLPREFIX}objdump ${ELF} -d -S
 
 nm:	all
-	${TOOLPATH}/${TOOLPREFIX}nm .pio/build/${TARGET}/firmware.elf
+	${TOOLPATH}/${TOOLPREFIX}nm ${ELF}
 
 ctags:
 	ctags -R . ~/.platformio/packages/framework-stm32cubef4/Drivers/STM32F4xx_HAL_Driver
@@ -43,7 +44,14 @@ ctags:
 openocd:
 	openocd -f board/st_nucleo_f4.cfg
 
-gdb:
+gdb: ${ELF}
 	gdb-multiarch -x .gdbinit
+
+gdb-native: ./tdd
+	gdb -x .gdbinit.native ./tdd
+
+test: ./tdd
+	scons
+	valgrind -s ./tdd 
 
 #	FIN
