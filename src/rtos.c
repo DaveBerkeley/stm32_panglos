@@ -4,6 +4,7 @@
 #include "cmsis_version.h"
 
 #include "panglos/debug.h"
+#include "panglos/stm32/hal.h"
 
 #include "rtos.h"
 
@@ -88,14 +89,18 @@ void heap_init()
 
 void FATAL(const char *text)
 {
-    // TODO : write to an out stream that works in C and C++
-    while (1)
-        ;
+    Error_HandlerX(text, 0);
 }
 
-void Error_Handler()
+    /*
+     *
+     */
+
+void SysTick_Handler()
 {
-    FATAL("RTOS Error");
+    // SysTick interrupt handler
+    HAL_IncTick();
+    xPortSysTickHandler();
 }
 
 void vApplicationStackOverflowHook(TaskHandle_t pxTask, char * pcTaskName)
@@ -117,9 +122,7 @@ void configureTimerForRunTimeStats(void)
 
 unsigned long getRunTimeCounterValue(void)
 {
-    FATAL("todo");
-    return 0;
-//    return HAL_GetTick();
+    return HAL_GetTick();
 }
 
     /*

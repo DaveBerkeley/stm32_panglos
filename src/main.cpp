@@ -1,6 +1,8 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+#include <assert.h>
 
 extern "C" {
 #include "FreeRTOS.h"
@@ -34,6 +36,31 @@ static void out_fn(char c, void* arg)
 }
 
 UART *log_uart = 0;
+
+static void tx_uart(const char *text)
+{
+    if (!log_uart) return;
+    log_uart->tx(text, strlen(text));
+}
+
+extern "C" void Error_HandlerX(const char *file, int line)
+{
+    tx_uart("Error: ");
+    tx_uart(file);
+
+    char buff[16];
+    snprintf(buff, sizeof(buff), "%d", line);
+    tx_uart(" +");
+    tx_uart(buff);
+
+    tx_uart("\r\n");
+    assert(0);
+}
+
+extern "C" void Error_Handler()
+{
+    Error_HandlerX(__FILE__, __LINE__);
+}
 
 extern "C" void po_log(Severity s, const char *fmt, ...)
 {
@@ -76,7 +103,7 @@ extern "C" void app_main(void *)
 extern "C" int main()
 {
     HAL_Init();
-//    SystemClock_Config();
+    //SystemClock_Config();
     heap_init();
 
     // init logging / io
@@ -97,19 +124,22 @@ extern "C" int main()
     };
     log_uart = STM32_UART::create(& config);
     ASSERT(log_uart);
-    //const char *start = "starting logger\r\n";
-    //uart->tx(start, strlen(start));
 
     // must be a real mutex here. The TASK_LOCK Mutex will block eg network, timers
     panglos::Mutex *mutex = panglos::Mutex::create();
     logger = new Logging(S_DEBUG, mutex);
 
     logger->add(log_uart, S_DEBUG, 0);
-    PO_DEBUG("PanglOs STM32 System");
 
     // show config, heap / memory data etc.
-    // show banner
+    PO_DEBUG("PanglOs  STM32");
+    PO_DEBUG("FreeRTOS %s", tskKERNEL_VERSION_NUMBER);
+    PO_DEBUG("CMSIS    v%d.%d", __CM_CMSIS_VERSION_MAIN, __CM_CMSIS_VERSION_SUB);
+    PO_DEBUG("NewLib   v%d.%d", __NEWLIB__, __NEWLIB_MINOR__);
 
+    const int err = SysTick_Config(SystemCoreClock / 1000);
+    ASSERT(!err);
+    
     //verbose_init();
 
     //Objects::objects = Objects::create(true);

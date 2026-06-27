@@ -193,8 +193,9 @@ header file. */
 
 #if ! defined(__ASSEMBLER__)
 void Error_Handler();
+void Error_HandlerX(const char *file, int line);
 #endif
-#define configASSERT( x ) if ((x) == 0) {taskDISABLE_INTERRUPTS(); Error_Handler();} 
+#define configASSERT( x ) if ((x) == 0) {taskDISABLE_INTERRUPTS(); Error_HandlerX(__FILE__,__LINE__);} 
 /* USER CODE END 1 */
 
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS

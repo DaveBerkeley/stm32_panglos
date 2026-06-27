@@ -15,7 +15,7 @@ all: include
 	pio $(MODE) -e ${TARGET} ${VERBOSE}
 	#PLATFORMIO_BUILD_FLAGS="-DPROJECT=${PROJECT} -D${PROJECT}" pio $(MODE) -e ${TARGET} ${VERBOSE}
 
-flash:
+flash: all
 	pio $(MODE) -e $(TARGET) --target upload ${VERBOSE}
 
 include:
