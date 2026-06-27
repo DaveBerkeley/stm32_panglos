@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include <string.h>
 
 extern "C" {
 #include "FreeRTOS.h"
@@ -15,6 +16,8 @@ extern "C" {
 
 #include "panglos/stm32/uart.h"
 
+#include "printf/printf.h"
+
 #include "rtos.h"
 
 using namespace panglos;
@@ -23,11 +26,17 @@ extern "C" {
 
     //  Move to rtos app layer
 
-//extern "C" void po_log(Severity s, const char *fmt, ...)
-extern "C" void po_log(Severity , const char *, ...)
+static void out_fn(char c, void* arg)
 {
-    Error_Handler();
-#if 0
+    if (!arg) return;
+    UART *uart = (UART*) arg;
+    uart->tx(& c, 1);
+}
+
+UART *log_uart = 0;
+
+extern "C" void po_log(Severity s, const char *fmt, ...)
+{
     va_list ap;
     va_start(ap, fmt);
     if (logger)
@@ -36,10 +45,10 @@ extern "C" void po_log(Severity , const char *, ...)
     }
     else
     {
-        vprintf(fmt, ap);
+        vfctprintf(out_fn, log_uart, fmt, ap);
+        // TODO : if no uart available, do what?
     }
     va_end(ap);
-#endif
 }
 
 }
@@ -86,13 +95,16 @@ extern "C" int main()
         .uart = USART2,
         .baud = 115200,
     };
-    UART *uart = STM32_UART::create(& config);
+    log_uart = STM32_UART::create(& config);
+    ASSERT(log_uart);
+    //const char *start = "starting logger\r\n";
+    //uart->tx(start, strlen(start));
 
     // must be a real mutex here. The TASK_LOCK Mutex will block eg network, timers
     panglos::Mutex *mutex = panglos::Mutex::create();
     logger = new Logging(S_DEBUG, mutex);
 
-    logger->add(uart, S_DEBUG, 0);
+    logger->add(log_uart, S_DEBUG, 0);
     PO_DEBUG("PanglOs STM32 System");
 
     // show config, heap / memory data etc.
