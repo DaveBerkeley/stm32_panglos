@@ -6,10 +6,8 @@ MODE = run
 
 .PHONY: all flash
 
-VERBOSE = -v
-#VERBOSE = 
-
-# Need to create a few soft links for uniform include paths
+VERBOSE := -v
+#VERBOSE := 
 
 all: include
 	pio $(MODE) -e ${TARGET} ${VERBOSE}
@@ -18,28 +16,37 @@ all: include
 flash: all
 	pio $(MODE) -e $(TARGET) --target upload ${VERBOSE}
 
+# Need to create a few soft links for uniform include paths
+
 include:
 	mkdir -p include
 	ln -s ../third_party/freertos/include include/freertos
 	ln -s ../third_party/freertos/portable/GCC/ARM_CM4F include/ARM_CM4F
 
 clean:
-	rm -rf .pio
+	rm -rf .pio third_party/build
 	find . -name "*~" | xargs rm
 	scons -c
 
 TOOLPATH=~/.platformio/packages/toolchain-gccarmnoneeabi/bin
 TOOLPREFIX=arm-none-eabi-
-ELF=.pio/build/${TARGET}/firmware.elf
+ELF:=.pio/build/${TARGET}/firmware.elf
 
-dump: all
+dump:
 	${TOOLPATH}/${TOOLPREFIX}objdump ${ELF} -d -S
 
-nm:	all
+nm:
 	${TOOLPATH}/${TOOLPREFIX}nm ${ELF}
 
+ar:
+	${TOOLPATH}/${TOOLPREFIX}ar t ${ELF}
+
+FRAMEWORK=~/.platformio/packages/framework-stm32cubef4
+
 ctags:
-	ctags -R . ~/.platformio/packages/framework-stm32cubef4/Drivers/STM32F4xx_HAL_Driver
+	ctags -R . \
+		${FRAMEWORK}/Drivers/STM32F4xx_HAL_Driver \
+		${FRAMEWORK}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 
 openocd:
 	openocd -f board/st_nucleo_f4.cfg

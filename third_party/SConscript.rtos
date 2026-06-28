@@ -35,11 +35,11 @@ for name in rtos_includes:
 includes += [ 'lib/', ]
 
 print("Building librtos")
-
-for name in files:
-    print(name)
-for name in includes:
-    print(name)
+#
+#for name in files:
+#    print(name)
+#for name in includes:
+#    print(name)
 
 cflags = [ ]
 
