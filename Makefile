@@ -3,18 +3,15 @@ PROJECT=TEST
 TARGET=nucleo_f446re
 
 MODE = run
+ARGS:=
 
 .PHONY: all flash
 
-VERBOSE := -v
-#VERBOSE := 
-
 all: include
-	pio $(MODE) -e ${TARGET} ${VERBOSE}
-	#PLATFORMIO_BUILD_FLAGS="-DPROJECT=${PROJECT} -D${PROJECT}" pio $(MODE) -e ${TARGET} ${VERBOSE}
+	pio $(MODE) -e ${TARGET} ${ARGS}
 
 flash: all
-	pio $(MODE) -e $(TARGET) --target upload ${VERBOSE}
+	pio $(MODE) -e $(TARGET) --target upload ${ARGS}
 
 # Need to create a few soft links for uniform include paths
 
@@ -33,13 +30,13 @@ TOOLPREFIX=arm-none-eabi-
 ELF:=.pio/build/${TARGET}/firmware.elf
 
 dump:
-	${TOOLPATH}/${TOOLPREFIX}objdump ${ELF} -d -S
+	${TOOLPATH}/${TOOLPREFIX}objdump ${ELF} -d -S ${ARGS}
 
 nm:
-	${TOOLPATH}/${TOOLPREFIX}nm ${ELF}
+	${TOOLPATH}/${TOOLPREFIX}nm ${ELF} ${ARGS}
 
 ar:
-	${TOOLPATH}/${TOOLPREFIX}ar t ${ELF}
+	${TOOLPATH}/${TOOLPREFIX}ar t ${ELF} ${ARGS}
 
 FRAMEWORK=~/.platformio/packages/framework-stm32cubef4
 
@@ -55,10 +52,10 @@ gdb: ${ELF}
 	gdb-multiarch -x .gdbinit
 
 gdb-native: ./tdd
-	gdb -x .gdbinit.native ./tdd
+	gdb -x .gdbinit.native ./tdd ${ARGS}
 
 test: ./tdd
 	scons
-	valgrind -s ./tdd 
+	valgrind -s ./tdd --gtest_filter="-Main.App" ${ARGS}
 
 #	FIN

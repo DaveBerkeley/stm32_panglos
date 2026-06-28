@@ -1,4 +1,6 @@
 
+#include <stdio.h>
+
 #include <gtest/gtest.h>
 
 #include "panglos/thread.h"
@@ -13,16 +15,28 @@ static void runner(void *)
 
 TEST(Thread, Test)
 {
-    Thread *thread = Thread::create("test");
+    int num = 5;
 
-    thread->start(runner, 0);
-    thread->join();
+    Thread *threads[num] = { 0 };
+    char names[num][10];
+   
+    for (int i = 0; i < num; i++)
+    {
+        snprintf(names[i], sizeof(names[i]), "test_%d", i);
+        threads[i] = Thread::create(names[i]);
+        threads[i]->start(runner, 0);
+    }
 
-    delete thread;
+    for (int i = 0; i < num; i++)
+    {
+        threads[i]->join();
+        delete threads[i];
+    }
+
 }
 
-void __attribute__((weak)) force_library_link(void) {
-    // This function does nothing
-}
+// Allows linker command to force inclusion of the tests in this module
+//  -Wl,--undefined=force_test_thread
+extern "C" void __attribute__((weak)) force_test_thread(void){}
 
 //  FIN

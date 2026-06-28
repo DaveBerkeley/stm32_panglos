@@ -107,9 +107,6 @@ extern "C" void po_log(Severity s, const char *fmt, ...)
      *
      */
 
-extern void force_library_link(void);
-void (*dummy)(void) = force_library_link;
-
 void run(void *arg)
 {
     test_run(0, 0);
