@@ -96,6 +96,8 @@ void FATAL(const char *text)
      *
      */
 
+extern void xPortSysTickHandler();
+
 void SysTick_Handler()
 {
     // SysTick interrupt handler

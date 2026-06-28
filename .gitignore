@@ -4,3 +4,4 @@ tags
 third_party/build
 tdd
 include
+output.map

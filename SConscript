@@ -15,5 +15,7 @@ else:
 if IS_TARGET:
     # We don't want the RTOS when building native
     env.SConscript("third_party/SConscript.rtos", exports="env")
+    # Test has a special build for the target
+    env.SConscript("test/SConscript.test", exports="env")
 
 #   FIN

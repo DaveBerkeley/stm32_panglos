@@ -22,6 +22,8 @@ extern "C" {
 
 #include "printf/printf.h"
 
+#include "../test/gtest/gtest.h"
+
 #include "rtos.h"
 #include "app_main.h"
 
@@ -105,6 +107,15 @@ extern "C" void po_log(Severity s, const char *fmt, ...)
      *
      */
 
+extern void force_library_link(void);
+void (*dummy)(void) = force_library_link;
+
+void run(void *arg)
+{
+    test_run(0, 0);
+    app_main(arg);
+}
+
 extern "C" int main()
 {
     HAL_Init();
@@ -152,7 +163,7 @@ extern "C" int main()
     //verbose_init();
 
     Thread *thread = Thread::create("main", 0);
-    thread->start(app_main, 0);
+    thread->start(run, 0);
 
     // This function should never return
     vTaskStartScheduler();

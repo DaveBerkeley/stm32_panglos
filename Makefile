@@ -24,7 +24,7 @@ include:
 	ln -s ../third_party/freertos/portable/GCC/ARM_CM4F include/ARM_CM4F
 
 clean:
-	rm -rf .pio third_party/build
+	rm -rf .pio third_party/build output.map
 	find . -name "*~" | xargs rm
 	scons -c
 

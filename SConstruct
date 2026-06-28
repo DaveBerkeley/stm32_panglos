@@ -8,6 +8,7 @@ files = [
 
     'test/rtos.cpp',
     'test/main.cpp',
+    'test/thread.cpp',
 
     'lib/printf/src/printf/printf.c',
 ]

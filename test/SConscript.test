@@ -1,0 +1,38 @@
+
+import os
+
+BUILD_DIR = '../third_party/build'
+
+Import("env")
+
+#  Test files
+
+files = [
+    'gtest.cpp',
+    'thread.cpp',
+]
+
+includes = [
+    '.',
+    '../lib/panglos/src/',
+]
+
+print("Building libtest")
+
+#for name in files:
+#    print(name)
+#for name in includes:
+#    print(name)
+
+cflags = [ ]
+
+env.Append(CPPPATH=includes)
+env.Append(CFLAGS=cflags)
+
+libtest = env.StaticLibrary(
+    target=os.path.join(BUILD_DIR, 'libtest'),
+    source=files
+)
+Default(libtest)
+
+# FIN
