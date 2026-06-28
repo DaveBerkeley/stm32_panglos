@@ -50,6 +50,12 @@ void add_test(Test *test);
     static Test group ## fn ##_xx(STRINGISE(group), STRINGISE(fn), test_ ##group ##fn); \
     void test_ ##group ##fn()
 
+#define RUN_TEST(name) \
+    extern void name(); \
+    __attribute__((section(".init_array"))) \
+    __attribute__((used)) \
+    void (*__init_ ##name)(void) = name;
+
 #endif  //  __cplusplus
 
 #if defined(__cplusplus)

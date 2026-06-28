@@ -107,6 +107,12 @@ extern "C" void po_log(Severity s, const char *fmt, ...)
      *
      */
 
+RUN_TEST(force_test_thread);
+
+    /*
+     *
+     */
+
 void run(void *arg)
 {
     test_run(0, 0);

@@ -32,11 +32,9 @@ TEST(Thread, Test)
         threads[i]->join();
         delete threads[i];
     }
-
 }
 
 // Allows linker command to force inclusion of the tests in this module
-//  -Wl,--undefined=force_test_thread
-extern "C" void __attribute__((weak)) force_test_thread(void){}
+void force_test_thread(void){}
 
 //  FIN
