@@ -33,6 +33,8 @@ using namespace panglos;
      *  Platform specific system initialisation
      */
 
+#if defined(STM32F446xx)
+
 //  Nucleo SMT32F446 Board
 
 #define UART_RX_PORT    GPIOA
@@ -46,6 +48,8 @@ using namespace panglos;
 
 #define LED_PORT        GPIOA
 #define LED_PIN         GPIO_PIN_5
+
+#endif  //  STM32F446xx
 
     /*
      *  Low level diagnostic / logging output
@@ -168,7 +172,11 @@ static void show_config(Out *out, const char *end="\r\n")
 {
     FmtOut fmt(out);
 
-    fmt.printf("PanglOs   STM32%s", end);
+#if defined(STM32F446xx)
+    const char *mpu = "STM32F446xx";
+#endif
+
+    fmt.printf("PanglOs   %s%s", mpu, end);
     fmt.printf("FreeRTOS  %s%s", tskKERNEL_VERSION_NUMBER, end);
     fmt.printf("CMSIS     v%d.%d%s", __CM_CMSIS_VERSION_MAIN, __CM_CMSIS_VERSION_SUB, end);
     fmt.printf("NewLib    v%d.%d%s", __NEWLIB__, __NEWLIB_MINOR__, end);
@@ -217,8 +225,10 @@ extern "C" int main()
     const int err = SysTick_Config(SystemCoreClock / 1000);
     ASSERT(!err);
  
+#if defined(LED_PORT)
     GPIO *led = gpio_create(LED_PORT, LED_PIN, GPIO_MODE_OUTPUT_PP, 0); 
     Objects::objects->add("led", led);
+#endif
 
     //verbose_init();
 

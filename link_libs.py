@@ -144,8 +144,8 @@ for path in files:
 #   Put the google test simulation in its own lib
 
 files = [
-    #'gtest/gtest.h',
-    #'gtest.cpp',
+    'gtest/gtest.h',
+    'gtest.cpp',
 ]
 
 for path in files:

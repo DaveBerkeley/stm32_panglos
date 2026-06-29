@@ -1,4 +1,5 @@
 lib/panglos
+lib/gtest
 .pio
 tags
 third_party/build

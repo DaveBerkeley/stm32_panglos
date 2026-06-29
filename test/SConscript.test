@@ -8,7 +8,6 @@ Import("env")
 #  Test files
 
 files = [
-    'gtest.cpp',
     'thread.cpp',
 ]
 
