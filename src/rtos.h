@@ -10,6 +10,8 @@ void FATAL(const char *msg);
 
 uint32_t get_idle_count();
 
+void tx_uart(const char *text);
+
 #ifdef __cplusplus
 }
 #endif

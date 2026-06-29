@@ -22,68 +22,12 @@ extern "C" {
 
 #include "printf/printf.h"
 
-#include "../test/gtest/gtest.h"
+#include "gtest/gtest.h"
 
 #include "rtos.h"
 #include "app_main.h"
 
 using namespace panglos;
-
-extern "C" {
-
-    //  Move to rtos app layer
-
-static void out_fn(char c, void* arg)
-{
-    if (!arg) return;
-    UART *uart = (UART*) arg;
-    uart->tx(& c, 1);
-}
-
-UART *log_uart = 0;
-
-static void tx_uart(const char *text)
-{
-    if (!log_uart) return;
-    log_uart->tx(text, strlen(text));
-}
-
-extern "C" void Error_HandlerX(const char *file, int line)
-{
-    tx_uart("Error: ");
-    tx_uart(file);
-
-    char buff[16];
-    snprintf(buff, sizeof(buff), "%d", line);
-    tx_uart(" +");
-    tx_uart(buff);
-
-    tx_uart("\r\n");
-    assert(0);
-}
-
-extern "C" void Error_Handler()
-{
-    Error_HandlerX(__FILE__, __LINE__);
-}
-
-extern "C" void po_log(Severity s, const char *fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-    if (logger)
-    {
-        logger->log(s, fmt, ap);
-    }
-    else
-    {
-        vfctprintf(out_fn, log_uart, fmt, ap);
-        // TODO : if no uart available, do what?
-    }
-    va_end(ap);
-}
-
-}
 
     /*
      *  Platform specific system initialisation
@@ -102,6 +46,45 @@ extern "C" void po_log(Severity s, const char *fmt, ...)
 
 #define LED_PORT        GPIOA
 #define LED_PIN         GPIO_PIN_5
+
+    /*
+     *  Low level diagnostic / logging output
+     */
+
+extern "C" {
+
+static void out_fn(char c, void* arg)
+{
+    if (!arg) return;
+    UART *uart = (UART*) arg;
+    uart->tx(& c, 1);
+}
+
+UART *log_uart = 0;
+
+void tx_uart(const char *text)
+{
+    if (!log_uart) return;
+    log_uart->tx(text, strlen(text));
+}
+
+void po_log(Severity s, const char *fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    if (logger)
+    {
+        logger->log(s, fmt, ap);
+    }
+    else
+    {
+        vfctprintf(out_fn, log_uart, fmt, ap);
+        // TODO : if no uart available, do what?
+    }
+    va_end(ap);
+}
+
+}
 
     /*
      *  To get round a linker issue, explicity include unit test modules.
@@ -130,10 +113,14 @@ void show_tests()
      *
      */
 
-static void idle_fn(void *arg)
+static void show_free()
 {
-    ASSERT(arg);
-    uint32_t *count = (uint32_t*) arg;
+    const size_t left = xPortGetFreeHeapSize();
+    PO_DEBUG("free_mem=%d", left);
+}
+
+static void _idle_fn(uint32_t *count)
+{
     while (true)
     {
         const uint32_t now = get_idle_count();
@@ -144,19 +131,48 @@ static void idle_fn(void *arg)
             continue;
         }
         *count = now;
-        return;
+        break;
     }
+}
+
+static void idle_fn(void *arg)
+{
+    ASSERT(arg);
+    uint32_t *count = (uint32_t*) arg;
+    _idle_fn(count);
+    // FreeRTOS cleans up old tasks after it calls the user idle fn
+    // so make a second call so we can see the memory after it does this.
+    _idle_fn(count);
+    show_free();
+}
+
+static void run_tests(const char *group, const char *test)
+{
+    uint32_t count = 0;
+    idle_fn(& count);
+    Test::run(group, test, idle_fn, & count);
 }
 
 void run(void *arg)
 {
-    // FreeRTOS doesn't delete thread storage until it has an idle cycle
-    // so wait for idle between tests so that any threads can be tidied.
-    uint32_t count = get_idle_count();
-    Test::run(0, 0, idle_fn, & count);
-
+    run_tests(0, 0);
     // Run the main app
     app_main(arg);
+}
+
+    /*
+     *
+     */
+
+static void show_config(Out *out, const char *end="\r\n")
+{
+    FmtOut fmt(out);
+
+    fmt.printf("PanglOs   STM32%s", end);
+    fmt.printf("FreeRTOS  %s%s", tskKERNEL_VERSION_NUMBER, end);
+    fmt.printf("CMSIS     v%d.%d%s", __CM_CMSIS_VERSION_MAIN, __CM_CMSIS_VERSION_SUB, end);
+    fmt.printf("NewLib    v%d.%d%s", __NEWLIB__, __NEWLIB_MINOR__, end);
+    fmt.printf("free_heap %d%s", xPortGetFreeHeapSize(), end);
 }
 
     /*
@@ -196,10 +212,7 @@ extern "C" int main()
     logger->add(log_uart, S_DEBUG, 0);
 
     // show config, heap / memory data etc.
-    PO_DEBUG("PanglOs  STM32");
-    PO_DEBUG("FreeRTOS %s", tskKERNEL_VERSION_NUMBER);
-    PO_DEBUG("CMSIS    v%d.%d", __CM_CMSIS_VERSION_MAIN, __CM_CMSIS_VERSION_SUB);
-    PO_DEBUG("NewLib   v%d.%d", __NEWLIB__, __NEWLIB_MINOR__);
+    show_config(log_uart);
 
     const int err = SysTick_Config(SystemCoreClock / 1000);
     ASSERT(!err);

@@ -1,4 +1,8 @@
 
+#include <stdio.h>
+#include <stdarg.h>
+#include <assert.h>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "cmsis_version.h"
@@ -84,15 +88,6 @@ void heap_init()
 }
 
     /*
-     *  FreeRTOS error handlers
-     */
-
-void FATAL(const char *text)
-{
-    Error_HandlerX(text, 0);
-}
-
-    /*
      *
      */
 
@@ -131,10 +126,9 @@ unsigned long getRunTimeCounterValue(void)
      *
      */
 
-
 static uint32_t idle_count;
 
-void __attribute__((weak)) vApplicationIdleHook()
+void vApplicationIdleHook()
 {
     //  TODO : sleep?
     idle_count += 1;
@@ -143,6 +137,34 @@ void __attribute__((weak)) vApplicationIdleHook()
 uint32_t get_idle_count()
 {
     return idle_count;
+}
+
+    /*
+     *  FreeRTOS error handlers
+     */
+
+void Error_HandlerX(const char *file, int line)
+{
+    tx_uart("Error: ");
+    tx_uart(file);
+
+    char buff[16];
+    snprintf(buff, sizeof(buff), "%d", line);
+    tx_uart(" +");
+    tx_uart(buff);
+
+    tx_uart("\r\n");
+    assert(0);
+}
+
+void Error_Handler()
+{
+    Error_HandlerX(__FILE__, __LINE__);
+}
+
+void FATAL(const char *text)
+{
+    Error_HandlerX(text, 0);
 }
 
 //  FIN
