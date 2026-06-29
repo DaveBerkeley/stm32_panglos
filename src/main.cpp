@@ -99,12 +99,14 @@ void po_log(Severity s, const char *fmt, ...)
      */
 
 extern void force_test_thread();
+extern void force_test_queue();
 
 void show_tests()
 {
     typedef void (*ForceFn)();
     const ForceFn fns[] = {
         force_test_thread,
+        force_test_queue,
         0,
     };
     for (const ForceFn *fn = fns; fn; fn++)

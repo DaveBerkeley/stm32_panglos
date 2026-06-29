@@ -9,6 +9,7 @@ files = [
     'test/rtos.cpp',
     'test/main.cpp',
     'test/thread.cpp',
+    'test/queue.cpp',
 
     'lib/printf/src/printf/printf.c',
 ]
@@ -24,6 +25,8 @@ panglos = [
     'linux/thread.cpp',
     'linux/time.cpp',
     'linux/arch.cpp',
+    'linux/queue.cpp',
+    'linux/semaphore.cpp',
 ]
 
 for name in panglos:
@@ -44,6 +47,8 @@ cflags = [
     '-Werror',
     '-Wformat=2', # strict level
     '-Werror=format',
+
+    '-Wno-missing-field-initializers',
     
     '-DARCH_LINUX=1',
 ]

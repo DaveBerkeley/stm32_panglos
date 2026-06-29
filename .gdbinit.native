@@ -2,5 +2,5 @@ set debuginfod enabled off
 b app_main
 tui enable
 
-set args --gtest_filter="-Main.app"
+set args --gtest_filter="-Main.App"
 

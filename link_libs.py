@@ -33,38 +33,9 @@ files = [
     'list.cpp',
     'io.cpp',
     'logger.cpp',
-    #'device.cpp',
     'thread.cpp',
-    #'json.cpp',
-    #'event_queue.cpp',
-    #'verbose.cpp',
-    #'socket.cpp',
-    #'cli_net.cpp',
-    #'tx_net.cpp',
-    #'watchdog.cpp',
-    #'batch.cpp',
-    #'network.cpp',
-    #'date.cpp',
-    #'fmt.cpp',
-    #'json_fmt.cpp',
-    #'storage.cpp',
 
-    #'app/cli.cpp',
-    #'app/cli_cmd.cpp',
-    #'app/cli_server.cpp',
-    #'app/event.cpp',
-    #'app/devices.cpp',
-    #'panglos/app/cli.h',
-    #'panglos/app/cli_cmd.h',
-    #'panglos/app/cli_server.h',
-    #'panglos/app/event.h',
-    #'panglos/app/devices.h',
-
-    #'panglos/deque.h',
-    #'panglos/buffer.h',
-    #'panglos/event.h',
     'panglos/debug.h',
-    #'panglos/timer.h',
     'panglos/mutex.h',
     'panglos/semaphore.h',
     'panglos/time.h',
@@ -74,52 +45,16 @@ files = [
     'panglos/logger.h',
     'panglos/thread.h',
     'panglos/queue.h',
-    #'panglos/device.h',
-    #'panglos/mqtt.h',
-    #'panglos/storage.h',
-    #'panglos/json.h',
-    #'panglos/event_queue.h',
-    #'panglos/verbose.h',
-    #'panglos/socket.h',
-    #'panglos/cli_net.h',
-    #'panglos/tx_net.h',
-    #'panglos/watchdog.h',
-    #'panglos/batch.h',
-    #'panglos/network.h',
-    #'panglos/ring_buffer.h',
-    #'panglos/date.h',
-    #'panglos/fmt.h',
-    #'panglos/json_fmt.h',
-    #'panglos/ntp.h',
 
-    #'drivers/motor.cpp',
-    #'drivers/pwm.cpp',
     'panglos/drivers/gpio.h',
-    #'panglos/drivers/spi.h',
-    #'panglos/drivers/i2c.h',
     'panglos/drivers/uart.h',
-    #'panglos/drivers/timer.h',
-    #'panglos/drivers/motor.h',
-    #'panglos/drivers/pwm.h',
-    #'panglos/drivers/7-segment.h',
-    #'panglos/drivers/led_strip.h',
-    #'panglos/drivers/i2c_bitbang.h',
 
-    #'panglos/hal.h',
-    #'panglos/esp32/hal.h',
-    #'panglos/esp32/adc.h',
-    #'panglos/esp32/timer.h',
     'panglos/stm32/hal.h',
     'panglos/stm32/uart.h',
     'panglos/stm32/gpio_arm.h',
 
     'panglos/arch.h',
-    'panglos/linux/arch.h',
-    #'panglos/riscv32/arch.h',
-    #'panglos/xtensa/arch.h',
     'panglos/stm32/arch.h',
-    #'riscv32/arch.cpp',
-    #'xtensa/arch.cpp',
     'stm32/arch.cpp',
     'stm32/hal.cpp',
     'stm32/gpio.cpp',
@@ -134,7 +69,9 @@ files = [
 
     'panglos/freertos/queue.h',
 
+    'panglos/linux/arch.h',
     'linux/thread.cpp',
+    'linux/queue.cpp',
 ]
 
 for path in files:
@@ -152,7 +89,7 @@ for path in files:
     make_link('../panglos/', 'lib/gtest/src/', path)
 
 #
-#   Unit Tests in their own lib
+#   Panglos Unit Tests in their own lib
 
 files = [
     #'list_test.cpp',
@@ -163,7 +100,7 @@ files = [
 ]
 
 for path in files:
-    make_link('../panglos/unit-tests/', 'src/unit-tests/', path)
+    make_link('../panglos/unit-tests/', 'test/', path)
 
 print("built library links ...")
 
