@@ -25,12 +25,10 @@ class Test
 public:
     Test(const char *_group, const char *_name, void (*_fn)());
 
-    static void run(const char *group, const char *name);
+    static void run(const char *group, const char *name, void (*idle)(void *)=0, void *arg=0);
     static void visit(const char *group, const char *name, visitor fn, void *arg);
     static void add(Test *test);
 };
-
-void add_test(Test *test);
 
 #define __STRINGISE(x)  #x
 #define STRINGISE(x)    __STRINGISE(x)
@@ -49,12 +47,6 @@ void add_test(Test *test);
     extern void test_ ##group ##fn(); \
     static Test group ## fn ##_xx(STRINGISE(group), STRINGISE(fn), test_ ##group ##fn); \
     void test_ ##group ##fn()
-
-#define RUN_TEST(name) \
-    extern void name(); \
-    __attribute__((section(".init_array"))) \
-    __attribute__((used)) \
-    void (*__init_ ##name)(void) = name;
 
 #endif  //  __cplusplus
 

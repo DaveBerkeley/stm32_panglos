@@ -7,14 +7,6 @@
 
 static Test *tests = 0;
 
-#if 0
-void Test::add(Test *test)
-{
-    test->next = tests;
-    tests = test;
-}
-#endif
-
 Test::Test(const char *_group, const char *_name, void (*_fn)())
 :   group(_group),
     name(_name),
@@ -26,8 +18,17 @@ Test::Test(const char *_group, const char *_name, void (*_fn)())
     tests = this;
 }
 
+struct Idle
+{
+    void (*fn)(void*);
+    void *arg;
+};
+
 void Test::visit(const char *group, const char *name, visitor fn, void *arg)
 {
+    struct Idle *idle = (struct Idle *) arg;
+    if (idle) ASSERT(idle->fn);
+
     ASSERT(fn);
     for (Test *test = tests; test; test = test->next)
     {
@@ -41,9 +42,9 @@ void Test::visit(const char *group, const char *name, visitor fn, void *arg)
             // name set but no match
             continue;
         }
-        fn(test, arg);
-        // FreeRTOS free() gets done in the idle thread,
-        // force idle?
+        fn(test, 0);
+
+        if (idle) idle->fn(idle->arg);
     }
 }
 
@@ -66,10 +67,11 @@ void v_run(Test *test, void *arg)
     }
 }
 
-void Test::run(const char *group, const char *name)
+void Test::run(const char *group, const char *name, void (*fn)(void*), void *arg)
 {
     PO_INFO("Running tests ...");
-    visit(group, name, v_run, 0);
+    struct Idle idle = { .fn = fn, .arg = arg };
+    visit(group, name, v_run, fn ? & idle : 0);
     PO_INFO("Tests completed");
 }
 

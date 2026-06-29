@@ -131,9 +131,18 @@ unsigned long getRunTimeCounterValue(void)
      *
      */
 
+
+static uint32_t idle_count;
+
 void __attribute__((weak)) vApplicationIdleHook()
 {
     //  TODO : sleep?
+    idle_count += 1;
+}
+
+uint32_t get_idle_count()
+{
+    return idle_count;
 }
 
 //  FIN

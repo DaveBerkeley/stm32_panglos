@@ -104,20 +104,64 @@ extern "C" void po_log(Severity s, const char *fmt, ...)
 #define LED_PIN         GPIO_PIN_5
 
     /*
+     *  To get round a linker issue, explicity include unit test modules.
      *
+     *  Just by referencing the functions it forces the linker to inspect the module.
+     *  Although the show_tests() module doesn't get called, and is removed from the binary,
+     *  as are the referenced functions, it does cause the unit tests to be included in the build.
      */
 
-RUN_TEST(force_test_thread);
+extern void force_test_thread();
+
+void show_tests()
+{
+    typedef void (*ForceFn)();
+    const ForceFn fns[] = {
+        force_test_thread,
+        0,
+    };
+    for (const ForceFn *fn = fns; fn; fn++)
+    {
+        PO_DEBUG("%p", fn);
+    }
+}
 
     /*
      *
      */
 
+static void idle_fn(void *arg)
+{
+    ASSERT(arg);
+    uint32_t *count = (uint32_t*) arg;
+    while (true)
+    {
+        const uint32_t now = get_idle_count();
+        if (now == *count)
+        {
+            // Wait for idle
+            Time::msleep(2);
+            continue;
+        }
+        *count = now;
+        return;
+    }
+}
+
 void run(void *arg)
 {
-    test_run(0, 0);
+    // FreeRTOS doesn't delete thread storage until it has an idle cycle
+    // so wait for idle between tests so that any threads can be tidied.
+    uint32_t count = get_idle_count();
+    Test::run(0, 0, idle_fn, & count);
+
+    // Run the main app
     app_main(arg);
 }
+
+    /*
+     *
+     */
 
 extern "C" int main()
 {

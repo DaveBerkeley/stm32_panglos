@@ -19,24 +19,21 @@ extern "C" void app_main(void *)
 
     GPIO *led = (GPIO*) Objects::objects->get("led");
 
-    UART *uart = (UART*) Objects::objects->get("uart");
-    if (uart) PO_DEBUG("found uart");
+    //UART *uart = (UART*) Objects::objects->get("uart");
+    //if (uart) PO_DEBUG("found uart");
 
-//    char buff[32];
+    Time::tick_t now = Time::get();
 
     // infinite loop
     while (true)
     {
-        Time::sleep(1);
+        if (!Time::elapsed_update(& now, 1000))
+        {
+            continue;
+        }
+
         PO_DEBUG("");
         if (led) led->toggle();
-
-#if 0
-        if (uart)
-        {
-            int n = uart->rx(buff, sizeof(buff));
-        }
-#endif
     }
 }
 

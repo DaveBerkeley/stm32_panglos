@@ -28,7 +28,7 @@ def make_link(src, dst, path):
 #
 
 files = [
-    #'time.cpp',
+    'time.cpp',
     'object.cpp',
     'list.cpp',
     'io.cpp',
