@@ -100,6 +100,7 @@ void po_log(Severity s, const char *fmt, ...)
 
 extern void force_test_thread();
 extern void force_test_queue();
+extern void force_test_semaphore();
 
 void show_tests()
 {
@@ -107,6 +108,7 @@ void show_tests()
     const ForceFn fns[] = {
         force_test_thread,
         force_test_queue,
+        force_test_semaphore,
         0,
     };
     for (const ForceFn *fn = fns; fn; fn++)

@@ -10,6 +10,7 @@ files = [
     'test/main.cpp',
     'test/thread.cpp',
     'test/queue.cpp',
+    'test/semaphore.cpp',
 
     'lib/printf/src/printf/printf.c',
 ]

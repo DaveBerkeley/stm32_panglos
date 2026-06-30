@@ -21,9 +21,9 @@ include:
 	ln -s ../third_party/freertos/portable/GCC/ARM_CM4F include/ARM_CM4F
 
 clean:
+	scons -c
 	rm -rf .pio third_party/build output.map
 	find . -name "*~" | xargs rm
-	scons -c
 
 TOOLPATH=~/.platformio/packages/toolchain-gccarmnoneeabi/bin
 TOOLPREFIX=arm-none-eabi-
