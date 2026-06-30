@@ -64,13 +64,9 @@ static void out_fn(char c, void* arg)
     uart->tx(& c, 1);
 }
 
-UART *log_uart = 0;
+static UART *log_uart = 0;
 
-void tx_uart(const char *text)
-{
-    if (!log_uart) return;
-    log_uart->tx(text, strlen(text));
-}
+    //  Function gets called by the PO_DEBUG/WARN/INFO macros in debug.h
 
 void po_log(Severity s, const char *fmt, ...)
 {
@@ -86,6 +82,14 @@ void po_log(Severity s, const char *fmt, ...)
         // TODO : if no uart available, do what?
     }
     va_end(ap);
+}
+
+    //  Called by low level errors in the FreeRTOS error Error_Handler()
+
+void tx_uart(const char *text)
+{
+    if (!log_uart) return;
+    log_uart->tx(text, strlen(text));
 }
 
 }
@@ -147,17 +151,23 @@ static void idle_fn(void *arg)
 {
     ASSERT(arg);
     uint32_t *count = (uint32_t*) arg;
+    // FreeRTOS frees up old tasks after it calls the user idle fn.
+    // The first idle may have occurred during the test, so it won't have
+    // been able to clean up yet.
     _idle_fn(count);
-    // FreeRTOS cleans up old tasks after it calls the user idle fn
-    // so make a second call so we can see the memory after it does this.
+    // so make a second call to ensure that the tests have finished and FreeRTOS
+    // has been able to run a clean up cycle.
     _idle_fn(count);
+    // We can see the memory after it does this.
     show_free();
 }
 
 static void run_tests(const char *group, const char *test)
 {
+    // show the memory before we run the tests, to check for leaks.
+    show_free();
+
     uint32_t count = 0;
-    idle_fn(& count);
     Test::run(group, test, idle_fn, & count);
 }
 
